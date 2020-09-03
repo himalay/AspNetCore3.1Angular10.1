@@ -18,9 +18,24 @@ namespace WorldCities.Controllers {
         }
 
         // GET: api/Cities
+        // GET: api/Cities/?pageIndex=0&pageSize=10
+        // GET: api/Cities/?pageIndex=0&pageSize=10&sortColumn=name&sortOrder=asc
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<City>>> GetCities () {
-            return await _context.Cities.ToListAsync ();
+        public async Task<ActionResult<ApiResult<City>>> GetCities (
+            int pageIndex = 0,
+            int pageSize = 10,
+            string sortColumn = null,
+            string sortOrder = null,
+            string filterColumn = null,
+            string filterQuery = null) {
+            return await ApiResult<City>.CreateAsync (
+                _context.Cities,
+                pageIndex,
+                pageSize,
+                sortColumn,
+                sortOrder,
+                filterColumn,
+                filterQuery);
         }
 
         // GET: api/Cities/5
