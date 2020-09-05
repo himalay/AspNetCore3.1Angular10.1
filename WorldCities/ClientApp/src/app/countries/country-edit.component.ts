@@ -12,13 +12,14 @@ import { map } from "rxjs/operators";
 import { Observable } from "rxjs";
 
 import { Country } from "./country";
+import { BaseFormComponent } from "../base.form.component";
 
 @Component({
   selector: "app-country-edit",
   templateUrl: "./country-edit.component.html",
   styleUrls: ["./country-edit.component.css"],
 })
-export class CountryEditComponent {
+export class CountryEditComponent extends BaseFormComponent {
   // the view title
   title: string;
   // the form model
@@ -30,6 +31,8 @@ export class CountryEditComponent {
   // and not NULL when we're editing an existing one.
   id?: number;
 
+  countries: Country[];
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -37,9 +40,8 @@ export class CountryEditComponent {
     private http: HttpClient,
     @Inject("BASE_URL") private baseUrl: string
   ) {
-    this.loadData();
+    super();
   }
-  countries;
 
   ngOnInit() {
     this.form = this.fb.group({

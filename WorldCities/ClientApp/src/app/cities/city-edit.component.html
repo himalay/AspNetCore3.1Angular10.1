@@ -24,13 +24,7 @@
         placeholder="City name..."
         class="form-control"
       />
-      <div
-        *ngIf="
-          form.get('name').invalid &&
-          (form.get('name').dirty || form.get('name').touched)
-        "
-        class="invalid-feedback"
-      >
+      <div *ngIf="hasError('name')" class="invalid-feedback">
         <div *ngIf="form.get('name').errors?.required">Name is required.</div>
       </div>
     </div>
@@ -49,15 +43,13 @@ feedback' : hasError('name') }">
         placeholder="Latitude..."
         class="form-control"
       />
-      <div
-        *ngIf="
-          form.get('lat').invalid &&
-          (form.get('lat').dirty || form.get('lat').touched)
-        "
-        class="invalid-feedback"
-      >
+      <div *ngIf="hasError('lat')" class="invalid-feedback">
         <div *ngIf="form.get('lat').errors?.required">
           Latitude is required.
+        </div>
+        <div *ngIf="form.get('lat').errors?.pattern">
+          Latitude requires a positive or negative number with 0-4 decimal
+          values.
         </div>
       </div>
     </div>
@@ -72,15 +64,13 @@ feedback' : hasError('name') }">
         placeholder="Latitude..."
         class="form-control"
       />
-      <div
-        *ngIf="
-          form.get('lon').invalid &&
-          (form.get('lon').dirty || form.get('lon').touched)
-        "
-        class="invalid-feedback"
-      >
+      <div *ngIf="hasError('lon')" class="invalid-feedback">
         <div *ngIf="form.get('lon').errors?.required">
           Longitude is required.
+        </div>
+        <div *ngIf="form.get('lon').errors?.pattern">
+          Longitude requires a positive or negative number with 0-4 decimal
+          values.
         </div>
       </div>
       <div class="form-group">
@@ -94,13 +84,7 @@ feedback' : hasError('name') }">
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <div
-          *ngIf="
-            form.get('countryId').invalid &&
-            (form.get('countryId').dirty || form.get('countryId').touched)
-          "
-          class="invalid-feedback"
-        >
+        <div *ngIf="hasError('countryId')" class="invalid-feedback">
           <div *ngIf="form.get('countryId').errors?.required">
             Please select a Country.
           </div>

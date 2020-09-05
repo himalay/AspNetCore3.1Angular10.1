@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ReactiveFormsModule } from "@angular/forms";
 
 import { AppComponent } from "./app.component";
+import { BaseFormComponent } from "./base.form.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { HomeComponent } from "./home/home.component";
 import { CitiesComponent } from "./cities/cities.component";
@@ -18,6 +19,7 @@ import { AngularMaterialModule } from "./angular-material.module";
 @NgModule({
   declarations: [
     AppComponent,
+    BaseFormComponent,
     NavMenuComponent,
     HomeComponent,
     CitiesComponent,

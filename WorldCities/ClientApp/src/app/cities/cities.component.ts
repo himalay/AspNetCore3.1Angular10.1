@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
+import { ActivatedRoute } from "@angular/router";
 
 import { City } from "./city";
 @Component({
@@ -11,7 +12,13 @@ import { City } from "./city";
   styleUrls: ["./cities.component.css"],
 })
 export class CitiesComponent {
-  public displayedColumns: string[] = ["id", "name", "lat", "lon"];
+  public displayedColumns: string[] = [
+    "id",
+    "name",
+    "lat",
+    "lon",
+    "countryName",
+  ];
   public cities: MatTableDataSource<City>;
   defaultPageIndex: number = 0;
   defaultPageSize: number = 10;
@@ -25,11 +32,23 @@ export class CitiesComponent {
 
   constructor(
     private http: HttpClient,
+    private activatedRoute: ActivatedRoute,
     @Inject("BASE_URL") private baseUrl: string
   ) {}
 
   ngOnInit() {
-    this.loadData();
+    const column = "countryId";
+    this.activatedRoute.queryParams.subscribe((queries) => {
+      if (queries[column]) {
+        this.defaultFilterColumn = column;
+        this.filterQuery = queries[column];
+      } else {
+        this.defaultFilterColumn = "name";
+        this.filterQuery = null;
+      }
+
+      this.loadData();
+    });
   }
 
   loadData(query: string = null) {

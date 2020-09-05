@@ -12,7 +12,13 @@ import { Country } from "./country";
   styleUrls: ["./countries.component.css"],
 })
 export class CountriesComponent {
-  public displayedColumns: string[] = ["id", "name", "iso2", "iso3"];
+  public displayedColumns: string[] = [
+    "id",
+    "name",
+    "iso2",
+    "iso3",
+    "totCities",
+  ];
   public countries: MatTableDataSource<Country>;
   defaultPageIndex: number = 0;
   defaultPageSize: number = 10;
