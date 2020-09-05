@@ -57,7 +57,12 @@ namespace WorldCities.Data {
             if (!String.IsNullOrEmpty (filterColumn) &&
                 !String.IsNullOrEmpty (filterQuery) &&
                 IsValidProperty (filterColumn)) {
-                source = source.Where ($"{filterColumn}.Contains(@0)", filterQuery);
+                var isColumnString = (GetPropertyInfo (filterColumn).PropertyType == typeof (string));
+                source = source.Where (
+                    isColumnString ?
+                    $"{filterColumn}.Contains(@0)" :
+                    $"{filterColumn} == @0", filterQuery
+                );
             }
 
             var count = await source.CountAsync ();
@@ -87,12 +92,19 @@ namespace WorldCities.Data {
         /// to protect against SQL injection attacks
         /// </summary>
         public static bool IsValidProperty (string propertyName, bool throwExceptionIfNotFound = true) {
-            var bindingAttr = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
-            var prop = typeof (T).GetProperty (propertyName, bindingAttr);
+            var prop = GetPropertyInfo (propertyName);
             if (prop == null && throwExceptionIfNotFound)
                 throw new NotSupportedException ($"ERROR: Property '{propertyName}' does not exist.");
 
             return prop != null;
+        }
+
+        public static PropertyInfo GetPropertyInfo (string propertyName) {
+            var bindingAttr = BindingFlags.IgnoreCase |
+                BindingFlags.Public |
+                BindingFlags.Static |
+                BindingFlags.Instance;
+            return typeof (T).GetProperty (propertyName, bindingAttr);
         }
         #endregion
 

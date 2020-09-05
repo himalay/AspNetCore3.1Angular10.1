@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WorldCities.Data.Models {
@@ -47,7 +48,24 @@ namespace WorldCities.Data.Models {
         /// <summary>
         /// The country related to this city.
         /// </summary>
+        [JsonIgnore]
         public virtual Country Country { get; set; }
+        #endregion
+
+        #region Client-side properties
+        /// <summary>
+        /// The name of the country related to this city.
+        /// </summary>
+        [NotMapped]
+        public string CountryName {
+            get {
+                return (Country != null) ?
+                    Country.Name :
+                    _CountryName;
+            }
+            set { _CountryName = value; }
+        }
+        private string _CountryName = "";
         #endregion
     }
 }
