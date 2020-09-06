@@ -6,12 +6,14 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace WorldCities.Data {
-    public class ApiResult<T> {
+namespace WorldCities.Data
+{
+    public class ApiResult<T>
+    {
         /// <summary>
         /// Private constructor called by the CreateAsync method.
         /// </summary>
-        private ApiResult (
+        private ApiResult(
             List<T> data,
             int count,
             int pageIndex,
@@ -19,12 +21,13 @@ namespace WorldCities.Data {
             string sortColumn,
             string sortOrder,
             string filterColumn,
-            string filterQuery) {
+            string filterQuery)
+        {
             Data = data;
             PageIndex = pageIndex;
             PageSize = pageSize;
             TotalCount = count;
-            TotalPages = (int) Math.Ceiling (count / (double) pageSize);
+            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             SortColumn = sortColumn;
             SortOrder = sortOrder;
             FilterColumn = filterColumn;
@@ -46,37 +49,48 @@ namespace WorldCities.Data {
         /// A object containing the IQueryable paged/sorted/filtered result 
         /// and all the relevant paging/sorting/filtering navigation info.
         /// </returns>
-        public static async Task<ApiResult<T>> CreateAsync (
+        public static async Task<ApiResult<T>> CreateAsync(
             IQueryable<T> source,
             int pageIndex,
             int pageSize,
             string sortColumn = null,
             string sortOrder = null,
             string filterColumn = null,
-            string filterQuery = null) {
-            if (!String.IsNullOrEmpty (filterColumn) &&
-                !String.IsNullOrEmpty (filterQuery) &&
-                IsValidProperty (filterColumn)) {
-                var isColumnString = (GetPropertyInfo (filterColumn).PropertyType == typeof (string));
-                source = source.Where (
+            string filterQuery = null)
+        {
+            if (!String.IsNullOrEmpty(filterColumn) &&
+                !String.IsNullOrEmpty(filterQuery) &&
+                IsValidProperty(filterColumn))
+            {
+                var isColumnString = (GetPropertyInfo(filterColumn).PropertyType == typeof(string));
+                source = source.Where(
                     isColumnString ?
                     $"{filterColumn}.Contains(@0)" :
                     $"{filterColumn} == @0", filterQuery
                 );
             }
 
-            var count = await source.CountAsync ();
+            var count = await source.CountAsync();
 
-            if (!String.IsNullOrEmpty (sortColumn) && IsValidProperty (sortColumn)) {
-                sortOrder = !String.IsNullOrEmpty (sortOrder) && sortOrder.ToUpper () == "ASC" ? "ASC" : "DESC";
-                source = source.OrderBy ($"{sortColumn} {sortOrder}");
+            if (!String.IsNullOrEmpty(sortColumn) && IsValidProperty(sortColumn))
+            {
+                sortOrder = !String.IsNullOrEmpty(sortOrder) && sortOrder.ToUpper() == "ASC" ? "ASC" : "DESC";
+                source = source.OrderBy($"{sortColumn} {sortOrder}");
             }
 
-            source = source.Skip (pageIndex * pageSize).Take (pageSize);
+            source = source.Skip(pageIndex * pageSize).Take(pageSize);
 
-            var data = await source.ToListAsync ();
+#if DEBUG
+            {
+                // retrieve the SQL query (for debug purposes)
+                var sql = source.ToSql();
+                // do something with the sql string
+            }
+#endif
 
-            return new ApiResult<T> (
+            var data = await source.ToListAsync();
+
+            return new ApiResult<T>(
                 data,
                 count,
                 pageIndex,
@@ -91,20 +105,22 @@ namespace WorldCities.Data {
         /// Checks if the given property name exists
         /// to protect against SQL injection attacks
         /// </summary>
-        public static bool IsValidProperty (string propertyName, bool throwExceptionIfNotFound = true) {
-            var prop = GetPropertyInfo (propertyName);
+        public static bool IsValidProperty(string propertyName, bool throwExceptionIfNotFound = true)
+        {
+            var prop = GetPropertyInfo(propertyName);
             if (prop == null && throwExceptionIfNotFound)
-                throw new NotSupportedException ($"ERROR: Property '{propertyName}' does not exist.");
+                throw new NotSupportedException($"ERROR: Property '{propertyName}' does not exist.");
 
             return prop != null;
         }
 
-        public static PropertyInfo GetPropertyInfo (string propertyName) {
+        public static PropertyInfo GetPropertyInfo(string propertyName)
+        {
             var bindingAttr = BindingFlags.IgnoreCase |
                 BindingFlags.Public |
                 BindingFlags.Static |
                 BindingFlags.Instance;
-            return typeof (T).GetProperty (propertyName, bindingAttr);
+            return typeof(T).GetProperty(propertyName, bindingAttr);
         }
         #endregion
 
@@ -137,8 +153,10 @@ namespace WorldCities.Data {
         /// <summary>
         /// TRUE if the current page has a previous page, FALSE otherwise.
         /// </summary>
-        public bool HasPreviousPage {
-            get {
+        public bool HasPreviousPage
+        {
+            get
+            {
                 return (PageIndex > 0);
             }
         }
@@ -146,8 +164,10 @@ namespace WorldCities.Data {
         /// <summary>
         /// TRUE if the current page has a next page, FALSE otherwise.
         /// </summary>
-        public bool HasNextPage {
-            get {
+        public bool HasNextPage
+        {
+            get
+            {
                 return ((PageIndex + 1) < TotalPages);
             }
         }
