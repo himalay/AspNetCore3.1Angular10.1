@@ -1,9 +1,10 @@
-import { Component, Inject, ViewChild } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { Component, ViewChild } from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { ActivatedRoute } from "@angular/router";
+import { CityService } from "./city.service";
+import { ApiResult } from "../base.service";
 
 import { City } from "./city";
 @Component({
@@ -31,9 +32,8 @@ export class CitiesComponent {
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(
-    private http: HttpClient,
-    private activatedRoute: ActivatedRoute,
-    @Inject("BASE_URL") private baseUrl: string
+    private cityService: CityService,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -62,24 +62,15 @@ export class CitiesComponent {
   }
 
   getData(event: PageEvent) {
-    const url = this.baseUrl + "api/Cities";
-    let params = new HttpParams()
-      .set("pageIndex", event.pageIndex.toString())
-      .set("pageSize", event.pageSize.toString())
-      .set("sortColumn", this.sort ? this.sort.active : this.defaultSortColumn)
-      .set(
-        "sortOrder",
-        this.sort ? this.sort.direction : this.defaultSortOrder
-      );
-
-    if (this.filterQuery) {
-      params = params
-        .set("filterColumn", this.defaultFilterColumn)
-        .set("filterQuery", this.filterQuery);
-    }
-
-    this.http
-      .get<any>(url, { params })
+    this.cityService
+      .getData<ApiResult<City>>(
+        event.pageIndex,
+        event.pageSize,
+        this.sort ? this.sort.active : this.defaultSortColumn,
+        this.sort ? this.sort.direction : this.defaultSortOrder,
+        this.filterQuery ? this.defaultFilterColumn : null,
+        this.filterQuery ? this.filterQuery : null
+      )
       .subscribe(
         (result) => {
           this.paginator.length = result.totalCount;
