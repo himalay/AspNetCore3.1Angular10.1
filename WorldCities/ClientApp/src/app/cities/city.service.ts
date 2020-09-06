@@ -2,8 +2,7 @@ import { Injectable, Inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 
-import { BaseService, ApiResult } from "../base.service";
-import { City } from "./city";
+import { BaseService } from "../base.service";
 
 @Injectable({
   providedIn: "root",
@@ -13,14 +12,14 @@ export class CityService extends BaseService {
     super(http, baseUrl);
   }
 
-  getData<ApiResult>(
+  getData<T>(
     pageIndex: number,
     pageSize: number,
     sortColumn: string,
     sortOrder: string,
     filterColumn: string,
     filterQuery: string
-  ): Observable<ApiResult> {
+  ): Observable<T> {
     const url = this.baseUrl + "api/Cities";
     let params = new HttpParams()
       .set("pageIndex", pageIndex.toString())
@@ -32,22 +31,22 @@ export class CityService extends BaseService {
         .set("filterColumn", filterColumn)
         .set("filterQuery", filterQuery);
     }
-    return this.http.get<ApiResult>(url, { params });
+    return this.http.get<T>(url, { params });
   }
 
-  get<City>(id): Observable<City> {
+  get<T>(id): Observable<T> {
     const url = this.baseUrl + "api/Cities/" + id;
-    return this.http.get<City>(url);
+    return this.http.get<T>(url);
   }
 
-  put<City>(item): Observable<City> {
+  put<T>(item): Observable<T> {
     const url = this.baseUrl + "api/Cities/" + item.id;
-    return this.http.put<City>(url, item);
+    return this.http.put<T>(url, item);
   }
 
-  post<City>(item): Observable<City> {
+  post<T>(item): Observable<T> {
     const url = this.baseUrl + "api/Cities/";
-    return this.http.post<City>(url, item);
+    return this.http.post<T>(url, item);
   }
 
   getCountries<ApiResult>(

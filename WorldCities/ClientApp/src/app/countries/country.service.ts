@@ -2,8 +2,7 @@ import { Injectable, Inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 
-import { BaseService, ApiResult } from "../base.service";
-import { Country } from "./country";
+import { BaseService } from "../base.service";
 
 @Injectable({
   providedIn: "root",
@@ -13,14 +12,14 @@ export class CountryService extends BaseService {
     super(http, baseUrl);
   }
 
-  getData<ApiResult>(
+  getData<T>(
     pageIndex: number,
     pageSize: number,
     sortColumn: string,
     sortOrder: string,
     filterColumn: string,
     filterQuery: string
-  ): Observable<ApiResult> {
+  ): Observable<T> {
     const url = this.baseUrl + "api/Countries";
     let params = new HttpParams()
       .set("pageIndex", pageIndex.toString())
@@ -32,22 +31,22 @@ export class CountryService extends BaseService {
         .set("filterColumn", filterColumn)
         .set("filterQuery", filterQuery);
     }
-    return this.http.get<ApiResult>(url, { params });
+    return this.http.get<T>(url, { params });
   }
 
-  get<Country>(id): Observable<Country> {
+  get<T>(id): Observable<T> {
     const url = this.baseUrl + "api/Countries/" + id;
-    return this.http.get<Country>(url);
+    return this.http.get<T>(url);
   }
 
-  put<Country>(item): Observable<Country> {
+  put<T>(item): Observable<T> {
     const url = this.baseUrl + "api/Countries/" + item.id;
-    return this.http.put<Country>(url, item);
+    return this.http.put<T>(url, item);
   }
 
-  post<Country>(item): Observable<Country> {
+  post<T>(item): Observable<T> {
     const url = this.baseUrl + "api/countries/";
-    return this.http.post<Country>(url, item);
+    return this.http.post<T>(url, item);
   }
 
   isDupeField(countryId, fieldName, fieldValue): Observable<boolean> {
