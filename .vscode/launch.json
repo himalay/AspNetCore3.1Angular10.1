@@ -29,6 +29,19 @@
       "type": "coreclr",
       "request": "attach",
       "processId": "${command:pickProcess}"
+    },
+    {
+      "name": "Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "https://localhost:5001",
+      "webRoot": "${workspaceFolder}/WorldCities/ClientApp"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full stack",
+      "configurations": [".NET Core Launch (web)", "Chrome"]
     }
   ]
 }
