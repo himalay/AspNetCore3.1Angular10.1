@@ -1,0 +1,19 @@
+version: "3.4"
+
+services:
+  api-tests:
+    build:
+      context: .
+      dockerfile: WorldCities.Tests/Dockerfile
+    container_name: worldcities-api-tests
+    user: "1000:1000"
+    volumes:
+      - .:/src
+
+  webapp-tests:
+    build:
+      context: .
+      dockerfile: WorldCities/ClientApp/Dockerfile.test
+    container_name: worldcities-webapp-tests
+    volumes:
+      - ./WorldCities/ClientApp:/app

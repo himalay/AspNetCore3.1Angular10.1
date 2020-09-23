@@ -1,0 +1,10 @@
+FROM node:12-alpine
+
+RUN apk add --no-cache  chromium --repository=http://dl-cdn.alpinelinux.org/alpine/v3.11/main
+
+ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROME_HEADLESS=true
+
+WORKDIR /app
+
+CMD ["npm", "test"]

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ActivatedRoute, Params } from "@angular/router";
+import { RouterTestingModule } from "@angular/router/testing";
+import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 
 import { AngularMaterialModule } from "../angular-material.module";
@@ -57,7 +58,11 @@ describe("CitiesComponent", () => {
 
     TestBed.configureTestingModule({
       declarations: [CitiesComponent],
-      imports: [BrowserAnimationsModule, AngularMaterialModule],
+      imports: [
+        BrowserAnimationsModule,
+        AngularMaterialModule,
+        RouterTestingModule,
+      ],
       providers: [
         {
           provide: CityService,

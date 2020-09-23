@@ -1,3 +1,5 @@
+using System;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +25,7 @@ namespace WorldCities
 
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment Env { get; }
+        private bool InDocker { get { return Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true"; } }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -46,8 +49,7 @@ namespace WorldCities
             // Add ApplicationDbContext.
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-                .EnableSensitiveDataLogging(Env.IsDevelopment())
-            );
+                .EnableSensitiveDataLogging(Env.IsDevelopment()));
 
             // Add ASP.NET Core Identity support
             services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -122,7 +124,14 @@ namespace WorldCities
 
                 if (Env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    if (InDocker)
+                    {
+                        spa.UseProxyToSpaDevelopmentServer("http://webapp:4200");
+                    }
+                    else
+                    {
+                        spa.UseAngularCliServer(npmScript: "start");
+                    }
                 }
             });
         }

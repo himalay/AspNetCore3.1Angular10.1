@@ -1,0 +1,59 @@
+version: "3.4"
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mssql-2019
+    restart: on-failure
+    volumes:
+      - mssql-2019:/var/opt/mssql/data
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssw0rd
+    ports:
+      - "1433:1433"
+
+  api:
+    build:
+      context: .
+      dockerfile: WorldCities/Dockerfile
+    container_name: worldcities-api
+    user: "1000:1000"
+    volumes:
+      - ./WorldCities:/src
+    ports:
+      - "5001:5001"
+      - "5000:5000"
+    depends_on:
+      - mssql
+      - webapp
+
+  webapp:
+    build:
+      context: .
+      dockerfile: WorldCities/ClientApp/Dockerfile
+    container_name: worldcities-webapp
+    user: "1000:1000"
+    volumes:
+      - ./WorldCities/ClientApp:/app
+    ports:
+      - "4200:4200"
+      - "49153:49153"
+
+  migrations:
+    image: mcr.microsoft.com/dotnet/core/sdk:3.1-alpine
+    container_name: worldcities-migrations
+    user: "1000:1000"
+    environment:
+      - HOME=/tmp
+      - DOTNET_CLI_TELEMETRY_OPTOUT=true
+      - PATH="/tmp/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    working_dir: /src
+    volumes:
+      - ./WorldCities:/src
+    command: "/bin/sh -c 'dotnet tool install --global dotnet-ef; tail -f /dev/null'"
+    depends_on:
+      - mssql
+
+volumes:
+  mssql-2019:
